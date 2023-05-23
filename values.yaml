@@ -1,0 +1,28 @@
+global:
+  enabled: true
+  name: consul
+  datacenter: apigwdemo
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+server:
+  enabled: true
+  replicas: 3
+ui:
+  enabled: true
+  service:
+    type: LoadBalancer
+    annotations: |
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+connectInject:
+  enabled: true
+apiGateway:
+  enabled: true
+  image: "hashicorp/consul-api-gateway:0.5.1"
+  managedGatewayClass:
+    serviceType: LoadBalancer
+    copyAnnotations:
+      service:
+        annotations: |
+          - service.beta.kubernetes.io/azure-load-balancer-internal
