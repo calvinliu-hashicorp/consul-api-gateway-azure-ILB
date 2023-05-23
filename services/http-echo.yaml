@@ -1,0 +1,60 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: http-echo
+  namespace: default
+spec:
+  protocol: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: http-echo
+  name: http-echo
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    name: high
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: http-echo
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: http-echo
+  namespace: default
+automountServiceAccountToken: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: http-echo
+  name: http-echo
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-echo
+  template:
+    metadata:
+      labels:
+        app: http-echo
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+    spec:
+      serviceAccountName: http-echo
+      containers:
+      - image: hashicorp/http-echo
+        name: http-echo
+        args:
+          - "-listen=:3000"
+          - "-text=hello world"
+        ports:
+        - containerPort: 3000
