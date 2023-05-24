@@ -1,4 +1,4 @@
-# consul-api-gateway-test
+# consul-api-gateway-azure-ILB
 
 ### Steps
 1. Clone repo
